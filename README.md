@@ -2,68 +2,77 @@
 
 A local cybersecurity laboratory for studying prompt injection attacks, LLM behavior, and defensive techniques in a controlled environment.
 
+The project was built to provide a practical environment for experimenting with prompt injection against a local Large Language Model (LLM), measuring attack outcomes, and comparing different security configurations.
+
 ---
 
 ## Project Overview
 
-The Prompt Injection Security Lab is a local experimental environment designed to demonstrate how prompt injection attacks can affect Large Language Model (LLM) applications.
+The Prompt Injection Security Lab is a local experimental environment designed to demonstrate how prompt injection attacks can affect LLM applications.
 
-The project allows different prompt injection techniques to be tested against:
+The laboratory compares three configurations:
 
-1. A controlled vulnerable baseline
-2. A local LLM without defenses
-3. A local LLM with security defenses enabled
+1. **Controlled Vulnerable Baseline**
+2. **Local LLM Without Defense**
+3. **Local LLM With Security Defenses**
 
-The laboratory uses a synthetic secret instead of real credentials or sensitive information. This allows prompt injection experiments to be performed safely in a controlled environment.
+The system uses a synthetic confidential value instead of real credentials or sensitive information. This allows attack scenarios to be tested safely without exposing real data.
 
+The laboratory currently includes **10 prompt injection attack scenarios** and **30 recorded experiments** across the three configurations.
 
-### Dashboard
+---
+
+## Dashboard
 
 ![Prompt Injection Security Lab Dashboard](docs/dashboard.png)
+
+The dashboard provides a centralized interface for selecting attack scenarios, choosing an experiment mode, enabling security defenses, and viewing experiment statistics.
 
 ---
 
 ## Why I Built This
 
-I built this side project to better understand prompt injection and how LLM applications can be manipulated through specially crafted instructions.
+I built this side project to better understand prompt injection and LLM security.
 
-Instead of only reading about prompt injection, I wanted to create a small laboratory where I could actually execute different attack scenarios, observe the model's behavior, and test defensive techniques.
+Instead of only reading about prompt injection, I wanted to create a small laboratory where I could test different attack scenarios, observe how an LLM application responds, and evaluate defensive techniques.
 
-The project uses a controlled synthetic secret so that the experiments can be performed safely without using real credentials or sensitive information.
+The project also allowed me to practice Python, Flask, application security, experiment logging, and security evaluation.
+
+A synthetic secret is used throughout the laboratory so the experiments can be performed without using real credentials or sensitive information.
 
 ---
 
 ## How the Lab Works
 
-The laboratory follows this general flow:
+The laboratory follows this general process:
 
 ```text
-Attack Scenario
-       |
-       v
-+----------------------+
-| Experiment Mode      |
-+----------------------+
-       |
-       +--------------------+
-       |                    |
-       v                    v
-Vulnerable Baseline     Local LLM
-                            |
-                            v
-                    Input Detection
-                            |
-                            v
-                    Safe Prompt Builder
-                            |
-                            v
-                       Local LLM
-                            |
-                            v
-                    Output Sanitization
-                            |
-                            v
-                       Evaluation
-                            |
-                            v
-                    Experiment Logging
+                    Attack Scenario
+                           |
+                           v
+                 +-------------------+
+                 |  Experiment Mode  |
+                 +-------------------+
+                           |
+              +------------+------------+
+              |                         |
+              v                         v
+     Vulnerable Baseline          Local LLM
+                                        |
+                                        v
+                              Input Detection
+                                        |
+                                        v
+                              Safe Prompt Builder
+                                        |
+                                        v
+                                   Local LLM
+                                        |
+                                        v
+                              Output Sanitization
+                                        |
+                                        v
+                                    Evaluation
+                                        |
+                                        v
+                              Experiment Logging
