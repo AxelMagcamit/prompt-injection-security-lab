@@ -42,6 +42,14 @@ A synthetic secret is used throughout the laboratory so the experiments can be p
 
 ---
 
+## Documentation
+
+A detailed technical report documenting the laboratory design, attack scenarios, security defenses, experimental methodology, results, limitations, and future improvements is available below.
+
+[View the Project Documentation](docs/Prompt_Injection_Security_Lab_Report.pdf)
+
+---
+
 ## How the Lab Works
 
 The laboratory follows a controlled workflow for testing prompt injection attacks against different experiment configurations.
