@@ -42,7 +42,6 @@ A synthetic secret is used throughout the laboratory so the experiments can be p
 
 ---
 
-```markdown
 ## How the Lab Works
 
 The laboratory follows a controlled workflow for testing prompt injection attacks against different experiment configurations.
