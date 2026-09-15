@@ -16,6 +16,11 @@ The project allows different prompt injection techniques to be tested against:
 
 The laboratory uses a synthetic secret instead of real credentials or sensitive information. This allows prompt injection experiments to be performed safely in a controlled environment.
 
+
+### Dashboard
+
+![Prompt Injection Security Lab Dashboard](docs/dashboard.png)
+
 ---
 
 ## Why I Built This
