@@ -944,15 +944,19 @@
 
             // Defense bars
 
+            // IMPORTANT:
+            // This uses the defense-specific blocking rate.
+            // 8 blocked out of 10 defended LLM tests = 80%.
+
             document.getElementById(
                 "input-block-rate"
             ).textContent =
-                data.input_block_rate + "%";
+                data.llm_defense_input_block_rate + "%";
 
             document.getElementById(
                 "input-block-bar"
             ).style.width =
-                data.input_block_rate + "%";
+                data.llm_defense_input_block_rate + "%";
 
 
             document.getElementById(
