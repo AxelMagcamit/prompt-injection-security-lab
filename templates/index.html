@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Prompt Injection Security Lab</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            color: #222;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 1200px;
+            margin: 30px auto;
+        }
+
+        h1 {
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .section {
+            background: white;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .statistics {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .stat-title {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 30px;
+            font-weight: bold;
+        }
+
+        .configuration-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .configuration-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 18px;
+        }
+
+        .configuration-card h3 {
+            margin-top: 0;
+        }
+
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            padding: 7px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .metric:last-child {
+            border-bottom: none;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-family: Arial, sans-serif;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .mode-container {
+            margin-top: 20px;
+        }
+
+        .radio-option {
+            display: inline-block;
+            margin-right: 25px;
+            font-weight: normal;
+        }
+
+        .radio-option input {
+            margin-right: 5px;
+        }
+
+        .checkbox-option {
+            margin-top: 20px;
+            font-weight: normal;
+        }
+
+        button {
+            padding: 11px 18px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-right: 10px;
+            margin-top: 20px;
+        }
+
+        .run-button {
+            background: #222;
+            color: white;
+        }
+
+        .reset-button {
+            background: #ddd;
+            color: #222;
+        }
+
+        button:hover {
+            opacity: 0.85;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f7f7f7;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .result-item {
+            padding: 10px;
+            background: white;
+            border-radius: 6px;
+        }
+
+        .response {
+            white-space: pre-wrap;
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+        }
+
+        .bar-container {
+            margin: 15px 0;
+        }
+
+        .bar-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .bar {
+            width: 100%;
+            height: 24px;
+            background: #e5e5e5;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: #333;
+            width: 0%;
+        }
+
+        .attack-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .attack-table th,
+        .attack-table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        .attack-table th {
+            background: #f0f0f0;
+        }
+
+        .success {
+            font-weight: bold;
+        }
+
+        .failed {
+            color: #666;
+        }
+
+        @media (max-width: 800px) {
+
+            .statistics {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .configuration-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+<div class="container">
+
+    <h1>Prompt Injection Security Lab</h1>
+
+    <p class="subtitle">
+        Controlled laboratory for testing prompt injection attacks,
+        LLM behavior, and defensive techniques.
+    </p>
+
+
+    <!-- =====================================================
+         OVERALL STATISTICS
+         ===================================================== -->
+
+    <div class="statistics">
+
+        <div class="stat-card">
+            <div class="stat-title">
+                Total Experiments
+            </div>
+
+            <div
+                class="stat-value"
+                id="total-tests">
+                0
+            </div>
+        </div>
+
+
+        <div class="stat-card">
+            <div class="stat-title">
+                Successful Attacks
+            </div>
+
+            <div
+                class="stat-value"
+                id="successful-attacks">
+                0
+            </div>
+        </div>
+
+
+        <div class="stat-card">
+            <div class="stat-title">
+                Input Blocked
+            </div>
+
+            <div
+                class="stat-value"
+                id="input-blocked">
+                0
+            </div>
+        </div>
+
+
+        <div class="stat-card">
+            <div class="stat-title">
+                Attack Success Rate
+            </div>
+
+            <div
+                class="stat-value"
+                id="success-rate">
+                0%
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         CONFIGURATION RESULTS
+         ===================================================== -->
+
+    <div class="section">
+
+        <h2>Experiment Results by Configuration</h2>
+
+        <div class="configuration-grid">
+
+
+            <!-- Vulnerable Baseline -->
+
+            <div class="configuration-card">
+
+                <h3>
+                    Vulnerable Baseline
+                </h3>
+
+                <div class="metric">
+                    <span>Tests</span>
+                    <strong id="vulnerable-tests">
+                        0
+                    </strong>
+                </div>
+
+                <div class="metric">
+                    <span>Successful</span>
+                    <strong id="vulnerable-successful">
+                        0
+                    </strong>
+                </div>
+
+                <div class="metric">
+                    <span>Secret Leaks</span>
+                    <strong id="vulnerable-leaks">
+                        0
+                    </strong>
+                </div>
+
+                <div class="metric">
+                    <span>Attack Success Rate</span>
+                    <strong id="vulnerable-rate">
+                        0%
+                    </strong>
+                </div>
+
+            </div>
+
+
+            <!-- LLM Without Defense -->
+
+            <div class="configuration-card">
+
+                <h3>
+                    Local LLM - No Defense
+                </h3>
+
+                <div class="metric">
+                    <span>Tests</span>
+                    <strong id="llm-no-defense-tests">
+                        0
+                    </strong>
+                </div>
+
+                <div class="metric">
+                    <span>Successful</span>
+                    <strong id="llm-no-defense-successful">
+                        0
+                    </strong>
+                </div>
+
+                <div class="metric">
+                    <span>Secret Leaks</span>
+                    <strong id="llm-no-defense-leaks">
+                        0
+                    </strong>
+                </div>
+
+                <div class="metric">
+                    <span>Attack Success Rate</span>
+                    <strong id="llm-no-defense-rate">
+                        0%
+                    </strong>
+                </div>
+
+            </div>
+
+
+            <!-- LLM With Defense -->
+
+            <div class="configuration-card">
+
+                <h3>
+                    Local LLM + Defense
+                </h3>
+
+                <div class="metric">
+                    <span>Tests</span>
+                    <strong id="llm-defense-tests">
+                        0
+                    </strong>
+                </div>
+
+                <div class="metric">
+                    <span>Successful</span>
+                    <strong id="llm-defense-successful">
+                        0
+                    </strong>
+                </div>
+
+                <div class="metric">
+                    <span>Input Blocked</span>
+                    <strong id="llm-defense-blocked">
+                        0
+                    </strong>
+                </div>
+
+                <div class="metric">
+                    <span>Blocking Rate</span>
+                    <strong id="llm-defense-rate">
+                        0%
+                    </strong>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         DEFENSE PERFORMANCE
+         ===================================================== -->
+
+    <div class="section">
+
+        <h2>Defense Performance</h2>
+
+        <div class="bar-container">
+
+            <div class="bar-label">
+                <span>Input Blocking Rate</span>
+
+                <span id="input-block-rate">
+                    0%
+                </span>
+            </div>
+
+            <div class="bar">
+
+                <div
+                    class="bar-fill"
+                    id="input-block-bar">
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="bar-container">
+
+            <div class="bar-label">
+
+                <span>
+                    Output Blocking Rate
+                </span>
+
+                <span id="output-block-rate">
+                    0%
+                </span>
+
+            </div>
+
+            <div class="bar">
+
+                <div
+                    class="bar-fill"
+                    id="output-block-bar">
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="bar-container">
+
+            <div class="bar-label">
+
+                <span>
+                    Overall Secret Leakage Rate
+                </span>
+
+                <span id="secret-leak-rate">
+                    0%
+                </span>
+
+            </div>
+
+            <div class="bar">
+
+                <div
+                    class="bar-fill"
+                    id="secret-leak-bar">
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         ATTACK CONFIGURATION
+         ===================================================== -->
+
+    <div class="section">
+
+        <h2>Run Experiment</h2>
+
+
+        <label for="attack-select">
+            Attack Scenario
+        </label>
+
+        <select id="attack-select">
+
+            {% for attack in attacks %}
+
+                <option value="{{ attack.id }}">
+                    #{{ attack.id }}
+                    - {{ attack.name }}
+                </option>
+
+            {% endfor %}
+
+        </select>
+
+
+        <div style="margin-top: 20px;">
+
+            <label for="attack-prompt">
+                Attack Prompt
+            </label>
+
+            <textarea
+                id="attack-prompt"
+                readonly>
+            </textarea>
+
+        </div>
+
+
+        <div class="mode-container">
+
+            <label>
+                Experiment Mode
+            </label>
+
+
+            <label class="radio-option">
+
+                <input
+                    type="radio"
+                    name="mode"
+                    value="vulnerable"
+                    checked>
+
+                Vulnerable Baseline
+
+            </label>
+
+
+            <label class="radio-option">
+
+                <input
+                    type="radio"
+                    name="mode"
+                    value="llm">
+
+                Local LLM
+
+            </label>
+
+        </div>
+
+
+        <label class="checkbox-option">
+
+            <input
+                type="checkbox"
+                id="defense-enabled">
+
+            Enable Security Defense
+
+        </label>
+
+
+        <div>
+
+            <button
+                class="run-button"
+                onclick="runAttack()">
+
+                RUN ATTACK
+
+            </button>
+
+
+            <button
+                class="reset-button"
+                onclick="resetResults()">
+
+                RESET RESULTS
+
+            </button>
+
+        </div>
+
+
+        <!-- =================================================
+             RESULT
+             ================================================= -->
+
+        <div
+            class="result"
+            id="result">
+
+            <h3>
+                Experiment Result
+            </h3>
+
+
+            <div class="result-grid">
+
+                <div class="result-item">
+                    <strong>Mode:</strong>
+                    <span id="result-mode"></span>
+                </div>
+
+                <div class="result-item">
+                    <strong>Attack:</strong>
+                    <span id="result-attack"></span>
+                </div>
+
+                <div class="result-item">
+                    <strong>Attack Type:</strong>
+                    <span id="result-type"></span>
+                </div>
+
+                <div class="result-item">
+                    <strong>Defense:</strong>
+                    <span id="result-defense"></span>
+                </div>
+
+                <div class="result-item">
+                    <strong>Input Blocked:</strong>
+                    <span id="result-input"></span>
+                </div>
+
+                <div class="result-item">
+                    <strong>Output Blocked:</strong>
+                    <span id="result-output"></span>
+                </div>
+
+                <div class="result-item">
+                    <strong>Secret Leaked:</strong>
+                    <span id="result-leaked"></span>
+                </div>
+
+                <div class="result-item">
+                    <strong>Attack Successful:</strong>
+                    <span id="result-success"></span>
+                </div>
+
+            </div>
+
+
+            <h4>
+                Response
+            </h4>
+
+            <div
+                class="response"
+                id="result-response">
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         ATTACK RESULTS TABLE
+         ===================================================== -->
+
+    <div class="section">
+
+        <h2>
+            Per-Attack Results
+        </h2>
+
+        <p>
+            Results are calculated from the recorded
+            experiments in <code>logs/results.json</code>.
+        </p>
+
+        <table class="attack-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Attack
+                    </th>
+
+                    <th>
+                        Vulnerable
+                    </th>
+
+                    <th>
+                        LLM No Defense
+                    </th>
+
+                    <th>
+                        LLM + Defense
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="attack-results">
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    // ========================================================
+    // ATTACK DATA FROM FLASK
+    // ========================================================
+
+    const attacks = {{ attacks | tojson }};
+
+
+    // ========================================================
+    // UPDATE ATTACK PROMPT
+    // ========================================================
+
+    function updatePrompt() {
+
+        const attackId =
+            parseInt(
+                document.getElementById(
+                    "attack-select"
+                ).value
+            );
+
+        const attack =
+            attacks.find(
+                a => a.id === attackId
+            );
+
+        if (attack) {
+
+            document.getElementById(
+                "attack-prompt"
+            ).value = attack.prompt;
+
+        }
+    }
+
+
+    // ========================================================
+    // GET SELECTED MODE
+    // ========================================================
+
+    function getSelectedMode() {
+
+        const selected =
+            document.querySelector(
+                'input[name="mode"]:checked'
+            );
+
+        return selected.value;
+    }
+
+
+    // ========================================================
+    // LOAD STATISTICS
+    // ========================================================
+
+    async function loadStatistics() {
+
+        try {
+
+            const response =
+                await fetch("/statistics");
+
+            const data =
+                await response.json();
+
+
+            // Overall
+
+            document.getElementById(
+                "total-tests"
+            ).textContent = data.total;
+
+            document.getElementById(
+                "successful-attacks"
+            ).textContent = data.successful;
+
+            document.getElementById(
+                "input-blocked"
+            ).textContent = data.input_blocked;
+
+            document.getElementById(
+                "success-rate"
+            ).textContent =
+                data.attack_success_rate + "%";
+
+
+            // Vulnerable baseline
+
+            const vulnerable =
+                data.configurations
+                    .vulnerable_baseline;
+
+            document.getElementById(
+                "vulnerable-tests"
+            ).textContent =
+                vulnerable.tests;
+
+            document.getElementById(
+                "vulnerable-successful"
+            ).textContent =
+                vulnerable.successful;
+
+            document.getElementById(
+                "vulnerable-leaks"
+            ).textContent =
+                vulnerable.secret_leaks;
+
+            document.getElementById(
+                "vulnerable-rate"
+            ).textContent =
+                vulnerable.attack_success_rate + "%";
+
+
+            // LLM without defense
+
+            const llmNoDefense =
+                data.configurations
+                    .llm_no_defense;
+
+            document.getElementById(
+                "llm-no-defense-tests"
+            ).textContent =
+                llmNoDefense.tests;
+
+            document.getElementById(
+                "llm-no-defense-successful"
+            ).textContent =
+                llmNoDefense.successful;
+
+            document.getElementById(
+                "llm-no-defense-leaks"
+            ).textContent =
+                llmNoDefense.secret_leaks;
+
+            document.getElementById(
+                "llm-no-defense-rate"
+            ).textContent =
+                llmNoDefense.attack_success_rate + "%";
+
+
+            // LLM with defense
+
+            const llmDefense =
+                data.configurations
+                    .llm_with_defense;
+
+            document.getElementById(
+                "llm-defense-tests"
+            ).textContent =
+                llmDefense.tests;
+
+            document.getElementById(
+                "llm-defense-successful"
+            ).textContent =
+                llmDefense.successful;
+
+            document.getElementById(
+                "llm-defense-blocked"
+            ).textContent =
+                llmDefense.blocked;
+
+            document.getElementById(
+                "llm-defense-rate"
+            ).textContent =
+                llmDefense.blocking_rate + "%";
+
+
+            // Defense bars
+
+            document.getElementById(
+                "input-block-rate"
+            ).textContent =
+                data.input_block_rate + "%";
+
+            document.getElementById(
+                "input-block-bar"
+            ).style.width =
+                data.input_block_rate + "%";
+
+
+            document.getElementById(
+                "output-block-rate"
+            ).textContent =
+                data.output_block_rate + "%";
+
+            document.getElementById(
+                "output-block-bar"
+            ).style.width =
+                data.output_block_rate + "%";
+
+
+            document.getElementById(
+                "secret-leak-rate"
+            ).textContent =
+                data.secret_leak_rate + "%";
+
+            document.getElementById(
+                "secret-leak-bar"
+            ).style.width =
+                data.secret_leak_rate + "%";
+
+
+        } catch (error) {
+
+            console.error(
+                "Statistics error:",
+                error
+            );
+
+        }
+
+    }
+
+
+    // ========================================================
+    // RUN ATTACK
+    // ========================================================
+
+    async function runAttack() {
+
+        const attackId =
+            parseInt(
+                document.getElementById(
+                    "attack-select"
+                ).value
+            );
+
+        const defenseEnabled =
+            document.getElementById(
+                "defense-enabled"
+            ).checked;
+
+        const selectedMode =
+            getSelectedMode();
+
+
+        try {
+
+            const response =
+                await fetch(
+                    "/run",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body: JSON.stringify({
+
+                            attack_id:
+                                attackId,
+
+                            defense_enabled:
+                                defenseEnabled,
+
+                            mode:
+                                selectedMode
+
+                        })
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (data.error) {
+
+                alert(data.error);
+
+                return;
+
+            }
+
+
+            // Show result
+
+            document.getElementById(
+                "result"
+            ).style.display = "block";
+
+
+            document.getElementById(
+                "result-mode"
+            ).textContent =
+                data.mode;
+
+
+            document.getElementById(
+                "result-attack"
+            ).textContent =
+                data.attack_name;
+
+
+            document.getElementById(
+                "result-type"
+            ).textContent =
+                data.attack_type;
+
+
+            document.getElementById(
+                "result-defense"
+            ).textContent =
+                data.defense_enabled
+                    ? "Enabled"
+                    : "Disabled";
+
+
+            document.getElementById(
+                "result-input"
+            ).textContent =
+                data.input_blocked
+                    ? "Yes"
+                    : "No";
+
+
+            document.getElementById(
+                "result-output"
+            ).textContent =
+                data.output_blocked
+                    ? "Yes"
+                    : "No";
+
+
+            document.getElementById(
+                "result-leaked"
+            ).textContent =
+                data.secret_leaked
+                    ? "YES"
+                    : "NO";
+
+
+            document.getElementById(
+                "result-success"
+            ).textContent =
+                data.attack_successful
+                    ? "YES"
+                    : "NO";
+
+
+            document.getElementById(
+                "result-response"
+            ).textContent =
+                data.response;
+
+
+            // Refresh statistics
+
+            await loadStatistics();
+
+        } catch (error) {
+
+            alert(
+                "Error running experiment: "
+                + error
+            );
+
+        }
+
+    }
+
+
+    // ========================================================
+    // RESET RESULTS
+    // ========================================================
+
+    async function resetResults() {
+
+        const confirmed =
+            confirm(
+                "Are you sure you want to reset all experiment results?"
+            );
+
+        if (!confirmed) {
+            return;
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    "/reset",
+                    {
+                        method: "POST"
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            alert(
+                data.message
+            );
+
+
+            await loadStatistics();
+
+            document.getElementById(
+                "attack-results"
+            ).innerHTML = "";
+
+
+        } catch (error) {
+
+            alert(
+                "Error resetting results: "
+                + error
+            );
+
+        }
+
+    }
+
+
+    // ========================================================
+    // INITIALIZE
+    // ========================================================
+
+    document
+        .getElementById("attack-select")
+        .addEventListener(
+            "change",
+            updatePrompt
+        );
+
+
+    updatePrompt();
+
+    loadStatistics();
+
+</script>
+
+</body>
+
+</html>
