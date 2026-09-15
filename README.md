@@ -42,37 +42,13 @@ A synthetic secret is used throughout the laboratory so the experiments can be p
 
 ---
 
+```markdown
 ## How the Lab Works
 
-The laboratory follows this general process:
+The laboratory follows a controlled workflow for testing prompt injection attacks against different experiment configurations.
 
-```text
-                    Attack Scenario
-                           |
-                           v
-                 +-------------------+
-                 |  Experiment Mode  |
-                 +-------------------+
-                           |
-              +------------+------------+
-              |                         |
-              v                         v
-     Vulnerable Baseline          Local LLM
-                                        |
-                                        v
-                              Input Detection
-                                        |
-                                        v
-                              Safe Prompt Builder
-                                        |
-                                        v
-                                   Local LLM
-                                        |
-                                        v
-                              Output Sanitization
-                                        |
-                                        v
-                                    Evaluation
-                                        |
-                                        v
-                              Experiment Logging
+![Prompt Injection Security Lab System Architecture](docs/system-archi.png)
+
+The vulnerable baseline is intentionally insecure and is used as a control condition.
+
+The defended LLM configuration applies security checks before and after the LLM interaction.
